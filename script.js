@@ -34,37 +34,46 @@ const STATE={
 }
 
 async function initMap() {
-    const { Map } = await google.maps.importLibrary("maps");
-    await google.maps.importLibrary("places");
-    STATE.map = new Map(document.getElementById("map"), {
-        center: { lat: MAP_CONFIG.defaultLat, lng: MAP_CONFIG.defaultLng },
-        zoom: MAP_CONFIG.zoom,
-        mapId: MAP_CONFIG.mapId
-    });
-
-    google.maps.event.addListener(STATE.map, 'click', function(event) {
-        const lat = event.latLng.lat();
-        const lng = event.latLng.lng();
-        console.log(lat, lng);
-        STATE.latitude=lat;
-        STATE.longitude=lng;
-
-        if (STATE.marker) {
-            STATE.marker.map = null;
-            STATE.marker = null;
-        }
-
-        STATE.marker = new google.maps.marker.AdvancedMarkerElement({
-            position: { lat: lat, lng: lng },
-            map: STATE.map,
-            title: 'User Marker'
+    try {
+        const { Map } = await google.maps.importLibrary("maps");
+        await google.maps.importLibrary("places");
+        STATE.map = new Map(document.getElementById("map"), {
+            center: { lat: MAP_CONFIG.defaultLat, lng: MAP_CONFIG.defaultLng },
+            zoom: MAP_CONFIG.zoom,
+            mapId: MAP_CONFIG.mapId
         });
-        aqi(lat, lng);
-        placename(lat,lng);
-        gettime(lat,lng);
-    });
+
+        google.maps.event.addListener(STATE.map, 'click', function(event) {
+            const lat = event.latLng.lat();
+            const lng = event.latLng.lng();
+            console.log(lat, lng);
+            STATE.latitude=lat;
+            STATE.longitude=lng;
+
+            if (STATE.marker) {
+                STATE.marker.map = null;
+                STATE.marker = null;
+            }
+
+            STATE.marker = new google.maps.marker.AdvancedMarkerElement({
+                position: { lat: lat, lng: lng },
+                map: STATE.map,
+                title: 'User Marker'
+            });
+            aqi(lat, lng);
+            placename(lat,lng);
+            gettime(lat,lng);
+        });
+    } catch (error) {
+        console.error('Error initializing map:', error);
+        document.getElementById('map').innerHTML = `
+            <div class="alert alert-danger" role="alert">
+                <h4 class="alert-heading">Error Loading Map</h4>
+                <p>There was an error initializing the map. Please try refreshing the page.</p>
+            </div>
+        `;
+    }
 }
-initMap();
 
 const placename = async (lat1 = 12, lng1 = 77) => {
     try {

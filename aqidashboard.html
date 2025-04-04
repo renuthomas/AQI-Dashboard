@@ -178,6 +178,8 @@
       return new Promise((resolve, reject) => {
         const script = document.createElement('script');
         script.src = `https://maps.googleapis.com/maps/api/js?key=${window.GOOGLE_MAPS_API_KEY}&libraries=marker,places&callback=initMap`;
+        script.async = true;
+        script.defer = true;
         script.onerror = () => {
           document.getElementById('map').innerHTML = `
             <div class="alert alert-warning" role="alert">
@@ -193,15 +195,6 @@
         };
         document.head.appendChild(script);
       });
-    };
-
-    // Initialize map when Google Maps is loaded
-    window.initMap = function() {
-      // Your map initialization code will be called here
-      if (typeof google !== 'undefined') {
-        // Map is ready to use
-        console.log('Google Maps loaded successfully');
-      }
     };
     
     // Load the API key from environment variable
