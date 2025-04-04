@@ -175,9 +175,33 @@
   <script>
     // Load Google Maps script with API key from environment variable
     const loadGoogleMapsScript = () => {
-      const script = document.createElement('script');
-      script.src = `https://maps.googleapis.com/maps/api/js?key=${window.GOOGLE_MAPS_API_KEY}&libraries=marker,places&loading=async`;
-      document.head.appendChild(script);
+      return new Promise((resolve, reject) => {
+        const script = document.createElement('script');
+        script.src = `https://maps.googleapis.com/maps/api/js?key=${window.GOOGLE_MAPS_API_KEY}&libraries=marker,places&callback=initMap`;
+        script.onerror = () => {
+          document.getElementById('map').innerHTML = `
+            <div class="alert alert-warning" role="alert">
+              <h4 class="alert-heading">Map Loading Error</h4>
+              <p>It seems your ad blocker is preventing the map from loading. To view the map:</p>
+              <ol>
+                <li>Disable your ad blocker for this site</li>
+                <li>Or add an exception for maps.googleapis.com</li>
+              </ol>
+            </div>
+          `;
+          reject(new Error('Failed to load Google Maps'));
+        };
+        document.head.appendChild(script);
+      });
+    };
+
+    // Initialize map when Google Maps is loaded
+    window.initMap = function() {
+      // Your map initialization code will be called here
+      if (typeof google !== 'undefined') {
+        // Map is ready to use
+        console.log('Google Maps loaded successfully');
+      }
     };
     
     // Load the API key from environment variable
@@ -185,7 +209,16 @@
       .then(response => response.json())
       .then(data => {
         window.GOOGLE_MAPS_API_KEY = data.googleMapsApiKey;
-        loadGoogleMapsScript();
+        return loadGoogleMapsScript();
+      })
+      .catch(error => {
+        console.error('Error loading map:', error);
+        document.getElementById('map').innerHTML = `
+          <div class="alert alert-danger" role="alert">
+            <h4 class="alert-heading">Error Loading Map</h4>
+            <p>There was an error loading the map configuration. Please try refreshing the page.</p>
+          </div>
+        `;
       });
   </script>
   <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
