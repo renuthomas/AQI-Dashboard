@@ -33,7 +33,8 @@ const STATE={
     finallocation:''
 }
 
-async function initMap() {
+// Make initMap globally available
+window.initMap = async function() {
     try {
         const { Map } = await google.maps.importLibrary("maps");
         await google.maps.importLibrary("places");
