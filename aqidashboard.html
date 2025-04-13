@@ -173,41 +173,50 @@
   </div>
 
   <script>
-    // Load Google Maps script securely
+    // Load Google Maps script with API key from environment variable
     const loadGoogleMapsScript = () => {
       return new Promise((resolve, reject) => {
         const script = document.createElement('script');
-        script.src = '/api/maps';
+        script.src = `https://maps.googleapis.com/maps/api/js?key=${window.GOOGLE_MAPS_API_KEY}&libraries=marker,places&callback=initMap`;
         script.async = true;
         script.defer = true;
-        script.onerror = (error) => {
-          console.error('Failed to load maps script:', error);
+        script.onerror = () => {
           document.getElementById('map').innerHTML = `
             <div class="alert alert-warning" role="alert">
               <h4 class="alert-heading">Map Loading Error</h4>
-              <p>Failed to load the map configuration. This could be due to:</p>
+              <p>It seems your ad blocker is preventing the map from loading. To view the map:</p>
               <ol>
-                <li>Missing or invalid API key configuration</li>
-                <li>Network connectivity issues</li>
-                <li>Ad blocker preventing the script from loading</li>
+                <li>Disable your ad blocker for this site</li>
+                <li>Or add an exception for maps.googleapis.com</li>
               </ol>
-              <p>Please check the browser console for more details.</p>
             </div>
           `;
-          reject(error);
-        };
-        script.onload = () => {
-          console.log('Maps script loaded successfully');
-          resolve();
+          reject(new Error('Failed to load Google Maps'));
         };
         document.head.appendChild(script);
       });
     };
     
-    // Initialize the map
-    loadGoogleMapsScript()
+    // Load the API key from environment variable
+    fetch('/api/config')
+      .then(response => response.json())
+      .then(data => {
+        // Store the API key in a closure to prevent direct access
+        const initMap = () => {
+          // Map initialization code here
+          window.initMap = initMap;
+        };
+        window.GOOGLE_MAPS_API_KEY = data.googleMapsApiKey;
+        return loadGoogleMapsScript();
+      })
       .catch(error => {
-        console.error('Error in map initialization:', error);
+        console.error('Error loading map:', error);
+        document.getElementById('map').innerHTML = `
+          <div class="alert alert-danger" role="alert">
+            <h4 class="alert-heading">Error Loading Map</h4>
+            <p>There was an error loading the map configuration. Please try refreshing the page.</p>
+          </div>
+        `;
       });
   </script>
   <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
