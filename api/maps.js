@@ -12,6 +12,19 @@ export default function handler(req, res) {
 
     // Return the script with the API key embedded
     res.send(`
+      const scriptgooglemap = document.createElement('script');
+      scriptgooglemap.src = 'https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=marker,places&callback=initializeMap';
+      scriptgooglemap.onerror = function(error) {
+        console.error('Script loading error:', error);
+        document.getElementById('map').innerHTML = \`
+          <div class="alert alert-danger" role="alert">
+            <h4 class="alert-heading">Script Loading Error</h4>
+            <p>Failed to load Google Maps script. Please check your network connection.</p>
+          </div>
+        \`;
+      };
+      document.head.appendChild(scriptgooglemap);
+
       initMap = function() {
         try {
           // Initialize the map
@@ -30,19 +43,7 @@ export default function handler(req, res) {
           \`;
         }
       };
-
-      const scriptgooglemap = document.createElement('script');
-      scriptgooglemap.src = 'https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=marker,places&callback=initializeMap';
-      scriptgooglemap.onerror = function(error) {
-        console.error('Script loading error:', error);
-        document.getElementById('map').innerHTML = \`
-          <div class="alert alert-danger" role="alert">
-            <h4 class="alert-heading">Script Loading Error</h4>
-            <p>Failed to load Google Maps script. Please check your network connection.</p>
-          </div>
-        \`;
-      };
-      document.head.appendChild(scriptgooglemap);
+      
       initMap();
     `);
   } catch (error) {
