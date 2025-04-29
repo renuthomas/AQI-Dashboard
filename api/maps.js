@@ -33,6 +33,9 @@ export default function handler(req, res) {
 
       const scriptgooglemap = document.createElement('script');
       scriptgooglemap.src = 'https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=marker,places&callback=initializeMap';
+      scriptgooglemap.onload=()=>{
+        initMap();
+      }
       scriptgooglemap.onerror = function(error) {
         console.error('Script loading error:', error);
         document.getElementById('map').innerHTML = \`
