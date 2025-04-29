@@ -46,7 +46,6 @@ export default function handler(req, res) {
         \`;
       };
       document.head.appendChild(scriptgooglemap);
-      initMap()
     `);
   } catch (error) {
     console.error('Error in maps.js:', error);
