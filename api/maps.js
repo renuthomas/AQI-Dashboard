@@ -32,7 +32,7 @@ export default function handler(req, res) {
       };
 
       const scriptgooglemap = document.createElement('script');
-      scriptgooglemap.src = 'https://maps.googleapis.com/maps/api/js?key=${apiKey}&loading=async&libraries=marker,places&callback=initializeMap';
+      scriptgooglemap.src = 'https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=marker,places&callback=initializeMap';
       scriptgooglemap.onload=()=>{
         initMap();
       }
