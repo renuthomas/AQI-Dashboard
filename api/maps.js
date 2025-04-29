@@ -1,6 +1,6 @@
 export default function handler(req, res) {
   const apiKey = process.env.GOOGLE_MAPS_API_KEY;
-  
+
   if (!apiKey) {
     console.error('Google Maps API key is not configured');
     return res.status(500).json({ error: 'Google Maps API key not configured' });
@@ -9,11 +9,12 @@ export default function handler(req, res) {
   try {
     // Set the content type to JavaScript
     res.setHeader('Content-Type', 'application/javascript');
-    
+
     // Return the script with the API key embedded
     res.send(`
-      async function initMap() {
+      initMap = function() {
         try {
+          // Initialize the map
           const map = new google.maps.Map(document.getElementById('map'), {
             center: { lat: 12.9716, lng: 77.5946 },
             zoom: 8
@@ -28,9 +29,10 @@ export default function handler(req, res) {
             </div>
           \`;
         }
-      }
+      };
 
       const scriptgooglemap = document.createElement('script');
+      scriptgooglemap.src = 'https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=marker,places&callback=initializeMap';
       scriptgooglemap.async = true;
       scriptgooglemap.defer = true;
       scriptgooglemap.onerror = function(error) {
@@ -43,10 +45,10 @@ export default function handler(req, res) {
         \`;
       };
       document.head.appendChild(scriptgooglemap);
-      initMap();
+      initMap()
     `);
   } catch (error) {
     console.error('Error in maps.js:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
-} 
+}
