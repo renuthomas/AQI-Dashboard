@@ -40,12 +40,6 @@ export default function handler(req, res) {
           console.log('Map initialized successfully');
         } catch (error) {
           console.error('Error initializing map:', error);
-          document.getElementById('map').innerHTML = \`
-            <div class="alert alert-danger" role="alert">
-              <h4 class="alert-heading">Map Initialization Error</h4>
-              <p>\${error.message}</p>
-            </div>
-          \`;
         }
       };
       initMap();
