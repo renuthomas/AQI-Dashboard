@@ -120,7 +120,6 @@ const aqi = async (lat1 = 12, lng1 = 77) => {
                 }
             }
         );
-        console.log(response)
         const jsonresult = (response.data);
         console.log(jsonresult)
         DOM_ELEMENTS.aqiresult.textContent = jsonresult.indexes[0].aqi;

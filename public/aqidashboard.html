@@ -172,16 +172,6 @@
   </div>
 
   <script>
-    // This must be defined before the Google Maps API script loads!
-    function initMap() {
-      if (window.initializeMap) {
-        window.initializeMap();
-      } else {
-        // If script.js hasn't loaded yet, wait and try again
-        setTimeout(initMap, 100);
-      }
-    }
-
     // Load Google Maps script securely through serverless function
     const loadGoogleMapsScript = () => {
       return new Promise((resolve, reject) => {
